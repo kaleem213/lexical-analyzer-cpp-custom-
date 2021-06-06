@@ -30,4 +30,8 @@
 <+>
 <=>
 <ID , value>
+<int>
+<ID , variables>
+<=>
+<NO>
 <}>

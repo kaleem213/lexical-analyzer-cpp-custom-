@@ -50,8 +50,6 @@ bool LexicalAnalyzer::setTokenList()
 		for (int i = 0; i < tokensCount;++i) {
 			fin >> loadToken;
 			fin >> occurs;
-			//cout << "loadToken: " << loadToken << endl;
-			//cout << "occurs: " << occurs << endl;
 			for (int j = 0; j < occurs;++j) {
 				fin >> loadIndex;
 				tokensList[loadIndex].token = loadToken;
@@ -81,7 +79,6 @@ bool LexicalAnalyzer::setKeywords()
 				sum += j;
 			}
 			key = generateHash(sum);
-			//cout << i << ") " << extra << ": " << key << endl;
 			if (keywords[key] != "\0") {
 				key = generateHash(sum,1,key);
 				if (keywords[key] != "\0") {
@@ -113,7 +110,6 @@ int LexicalAnalyzer::generateHash(int sum,int type,int key)
 		return key;
 	}
 	else{
-		//cout << "in second method\n";
 		alterSum = 100 - (sum % 100);
 		alterKey = (key + alterSum) % arraySize;
 		return alterKey;
@@ -143,20 +139,13 @@ bool LexicalAnalyzer::setTransitionTable()
 
 		for (int i = 0; i < symbolsCount;++i) {
 			sum = sumValue(symbols[i]);
-			//for (int j : symbols[i]) {
-			//	cout << "symbol is: " << j;
-			//	sum += j;
-			//}
 			symbolIndex[i] = generateHash(sum);
-			//cout << "symbolIndex is: "<<symbolIndex[i] << endl;
 		}
 
 		for (int i = 0; i < statesCount;++i) {
 			for (int j = 0; j < symbolsCount;++j) {
 				fin2>>transitionTable[i][symbolIndex[j]];
-				//cout << transitionTable[i][symbolIndex[j]] << '\t';
 			}
-			//cout << endl;
 		}
 		fin2.close();
 		return true;
@@ -176,7 +165,6 @@ bool LexicalAnalyzer::getToken() {
 	bool status = false;
 	while (buffer.getChar(character,status)) {
 		if (character == ' ') {
-			//cout << "in space: " << endl;
 			if (arrIndex != 0) {
 				key = generateHash(' ');
 				result = transitionTable[arrIndex][key];
@@ -189,6 +177,7 @@ bool LexicalAnalyzer::getToken() {
 			if ((character >= 'A' && character <= 'Z') || (character >= 'a' && character <= 'z')) {
 				if (character == 'E' || character == 'e') {
 					if (arrIndex == 35 || arrIndex == 36) {
+						cout << "number e called\n";
 						key = generateHash('e');
 					}
 					else {
@@ -205,9 +194,8 @@ bool LexicalAnalyzer::getToken() {
 			else {
 				key = generateHash(character);
 			}
-			//cout << "key is: " << key << endl;
 			result = transitionTable[arrIndex][key];
-			//cout << "result is: " << result << endl<<endl;
+			cout << "result: " << result << endl;
 			if (result==0) {
 				if (result != arrIndex) {
 					generateToken(fout, fout1, arrIndex, data);
@@ -229,11 +217,10 @@ bool LexicalAnalyzer::getToken() {
 	return true;
 }
 void LexicalAnalyzer::generateToken(ofstream& fout,ofstream &fout1,int arrIndex,string data) {
-	//cout << "in\n";
-	//cout << "arrIndex: " << arrIndex << endl;
-	//cout << "tokensList: " << tokensList[arrIndex].finalStatus << endl;
+	cout << "data in genToken: " << data << endl;
+	cout << "arrIndex in genToken: " << arrIndex << endl;
 		if (tokensList[arrIndex].finalStatus) {
-			fout << "<";// << tokensList[arrIndex].token;
+			fout << "<";
 			if (arrIndex==1|| arrIndex == 35 || arrIndex == 36 || arrIndex == 37) {
 				if (checkKeywordValidity(data)) {
 					fout << data;
